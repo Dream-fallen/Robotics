@@ -1,32 +1,35 @@
-# Arcade Drive only requires one motor, and thus only one control stick. Axis 3 = Forward, Axis 4 = Turn.
-
 from vex import *
 
 # ---- HARDWARE SETUP ----
 brain = Brain()
 controller = Controller()
-
-# Setup Motors (Change ports and direction configuration to match your robot)
 left_motor = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False)
 right_motor = Motor(Ports.PORT6, GearSetting.RATIO_18_1, True) 
 
+DEADBAND = 10 # Ignore joystick movements less than 10%
+
 def main():
-    brain.screen.print("Arcade Drive Active")
+    brain.screen.print("Mode: Arcade Drive")
 
     while True:
-        # Read forward/backward power and turning power from the left joystick
-        forward_power = controller.axis3.position()  # Left Stick Up/Down
-        turn_power = controller.axis4.position()     # Left Stick Left/Right
+        forward = controller.axis3.position() 
+        turn = controller.axis4.position()     
         
-        # Mix the channels to calculate individual motor speeds
-        left_speed = forward_power + turn_power
-        right_speed = forward_power - turn_power
+        # Apply deadband to prevent drifting
+        if abs(forward) < DEADBAND: forward = 0
+        if abs(turn) < DEADBAND: turn = 0
 
-        # Apply speeds to motors
+        # Mix channels
+        left_speed = forward + turn
+        right_speed = forward - turn
+
+        # Clamp values between -100 and 100
+        left_speed = max(min(left_speed, 100), -100)
+        right_speed = max(min(right_speed, 100), -100)
+
         left_motor.spin(FORWARD, left_speed, PERCENT)
         right_motor.spin(FORWARD, right_speed, PERCENT)
 
-        # Allow the brain's processor to rest briefly
         wait(20, MSEC)
 
 main()
