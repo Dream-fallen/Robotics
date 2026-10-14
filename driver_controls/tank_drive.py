@@ -1,28 +1,26 @@
-# Tank Drive requires 2 motors. Left Joystick controls the Left Motor. Right Joystick controls the Right Motor.
-
 from vex import *
 
 # ---- HARDWARE SETUP ----
 brain = Brain()
 controller = Controller()
-
-# Setup Motors (Change ports and direction configuration to match your robot)
 left_motor = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False)
 right_motor = Motor(Ports.PORT6, GearSetting.RATIO_18_1, True) 
 
+DEADBAND = 10
+
 def main():
-    brain.screen.print("Tank Drive Active")
+    brain.screen.print("Mode: Tank Drive")
 
     while True:
-        # Read the vertical position of both joysticks
-        left_speed = controller.axis3.position()   # Left Stick Up/Down
-        right_speed = controller.axis2.position()  # Right Stick Up/Down
+        left_speed = controller.axis3.position()
+        right_speed = controller.axis2.position()
 
-        # Apply speeds to motors
+        if abs(left_speed) < DEADBAND: left_speed = 0
+        if abs(right_speed) < DEADBAND: right_speed = 0
+
         left_motor.spin(FORWARD, left_speed, PERCENT)
         right_motor.spin(FORWARD, right_speed, PERCENT)
 
-        # Allow the brain's processor to rest briefly
         wait(20, MSEC)
 
 main()
