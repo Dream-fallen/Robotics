@@ -1,7 +1,7 @@
 from vex import *
 import config
 
-# Define named positions (Tune these numbers for your actual build!)
+# Define named positions (Tune these numbers for the actual build!)
 ARM_POSITIONS = {
     "IDLE": 0,
     "PICKUP": 450,
