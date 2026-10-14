@@ -1,0 +1,16 @@
+from vex import *
+
+# Motor Ports
+LEFT_MOTOR_PORT = Ports.PORT1
+RIGHT_MOTOR_PORT = Ports.PORT6
+ARM_MOTOR_PORT = Ports.PORT2
+CLAW_MOTOR_PORT = Ports.PORT3
+
+# Sensor Ports
+INERTIAL_PORT = Ports.PORT10
+DISTANCE_PORT = Ports.PORT11
+OPTICAL_PORT = Ports.PORT12
+
+# Constants
+GEAR_RATIO = GearSetting.RATIO_18_1
+WHEEL_DIAMETER = 2.0 # inches
