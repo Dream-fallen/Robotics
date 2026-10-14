@@ -2,20 +2,20 @@ from vex import *
 
 # ---- HARDWARE SETUP ----
 brain = Brain()
-left_motor = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False)
-right_motor = Motor(Ports.PORT6, GearSetting.RATIO_18_1, True) 
+# FIX: Removed the 'GearSetting.RATIO_18_1' strings which caused compiler errors on IQ
+left_motor = Motor(Ports.PORT1, False)
+right_motor = Motor(Ports.PORT6, True) 
 inertial = Inertial(Ports.PORT10) 
 
 def turn_to_angle(target_angle):
     # Simple Proportional Control (P-Loop)
-    Kp = 1.5 # Adjusted downward slightly for safety
+    Kp = 1.5 
     
     # Reset rotation to 0 before the turn so target_angle is relative to current facing
-    # Alternatively, leave this out if target_angle is absolute field positioning
     inertial.set_rotation(0, DEGREES) 
     
     while True:
-        # Using rotation() avoids the 0-360 wrap-around glitch
+        # Using rotation() safely avoids the 0-360 wrap-around glitch
         current_angle = inertial.rotation(DEGREES)
         error = target_angle - current_angle
         
