@@ -1,37 +1,50 @@
 from vex import *
 
 # ---- HARDWARE SETUP ----
+brain = Brain()
 left_motor = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False)
 right_motor = Motor(Ports.PORT6, GearSetting.RATIO_18_1, True) 
 inertial = Inertial(Ports.PORT10) 
 
 def turn_to_angle(target_angle):
     # Simple Proportional Control (P-Loop)
-    Kp = 2.0 # Tuning constant: increase if too slow, decrease if it overshoots
+    Kp = 1.5 # Adjusted downward slightly for safety
+    
+    # Reset rotation to 0 before the turn so target_angle is relative to current facing
+    # Alternatively, leave this out if target_angle is absolute field positioning
+    inertial.set_rotation(0, DEGREES) 
     
     while True:
-        current_angle = inertial.heading()
+        # Using rotation() avoids the 0-360 wrap-around glitch
+        current_angle = inertial.rotation(DEGREES)
         error = target_angle - current_angle
         
-        if abs(error) < 2: # Stop when within 2 degrees of target
+        # Stop when within 1.5 degrees of target
+        if abs(error) < 1.5: 
             break
             
         speed = error * Kp
-        speed = max(min(speed, 50), -50) # Cap speed at 50%
+        
+        # Clean speed cap matching direction
+        if speed > 50: speed = 50
+        elif speed < -50: speed = -50
         
         left_motor.spin(FORWARD, speed, PERCENT)
         right_motor.spin(FORWARD, -speed, PERCENT)
         wait(20, MSEC)
     
-    left_motor.stop()
-    right_motor.stop()
+    # Explicitly hold position or brake
+    left_motor.stop(BRAKE)
+    right_motor.stop(BRAKE)
 
 def main():
+    # Calibrate with ample time given to sit still
     inertial.calibrate()
-    while inertial.isCalibrating():
+    while inertial.is_calibrating():
         wait(20, MSEC)
+    wait(500, MSEC) # Extra safety buffer after calibration ends
         
-    # Example: Turn to 90 degrees
+    # Example: Turn 90 degrees to the right
     turn_to_angle(90)
 
 main()
