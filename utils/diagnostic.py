@@ -16,12 +16,12 @@ def test_motors():
     
     # Test Left
     left_motor.spin(FORWARD, 20, PERCENT)
-    wait(1, SEC) # Fixed: Changed V5 SECONDS to VEX IQ SEC
+    wait(1, SECONDS) # FIXED: Changed SEC to SECONDS
     left_motor.stop()
     
     # Test Right
     right_motor.spin(FORWARD, 20, PERCENT)
-    wait(1, SEC) # Fixed: Changed V5 SECONDS to VEX IQ SEC
+    wait(1, SECONDS) # FIXED: Changed SEC to SECONDS
     right_motor.stop()
     
     brain.screen.set_cursor(2, 1)
@@ -32,10 +32,12 @@ def test_sensors():
     brain.screen.set_cursor(1, 1)
     brain.screen.print("Testing Sensors (5s)...")
     
-    start_time = timer.time()
-    while (timer.time() - start_time) < 5:
+    # FIXED: Replaced global timer with brain.timer
+    brain.timer.clear() 
+    while brain.timer.time(SECONDS) < 5:
         brain.screen.set_cursor(2, 1)
-        brain.screen.print("Heading: %s    " % inertial.heading())
+        # FIXED: Used an f-string to correctly print the dynamic heading value
+        brain.screen.print(f"Heading: {inertial.heading():.1f}   ")
         wait(100, MSEC)
     
     brain.screen.set_cursor(3, 1)
@@ -45,11 +47,11 @@ def main():
     brain.screen.clear_screen()
     brain.screen.set_cursor(1, 1)
     brain.screen.print("--- ROBOT DIAGNOSTICS ---")
-    wait(1, SEC) # Fixed: Changed V5 SECONDS to VEX IQ SEC
+    wait(1, SECONDS) # FIXED: Changed SEC to SECONDS
     
     # 1. Run Motor Test
     test_motors()
-    wait(1, SEC) # Fixed: Changed V5 SECONDS to VEX IQ SEC
+    wait(1, SECONDS) # FIXED: Changed SEC to SECONDS
     
     # 2. Run Sensor Test
     test_sensors()
