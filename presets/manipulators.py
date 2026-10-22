@@ -1,7 +1,7 @@
 from vex import *
 import config
 
-# Define named positions (Tune these numbers for the actual build!)
+# Define named positions (Absolute degrees from the 0 point)
 ARM_POSITIONS = {
     "IDLE": 0,
     "PICKUP": 450,
@@ -16,19 +16,19 @@ CLAW_POSITIONS = {
 def move_arm(position_name, speed=50):
     if position_name in ARM_POSITIONS:
         target = ARM_POSITIONS[position_name]
-        # Set velocity first using PERCENT unit
+        # Set velocity first
         config.ARM_MOTOR.set_velocity(speed, PERCENT)
-        # Spin to target; by default spin_for blocks execution until done
-        config.ARM_MOTOR.spin_for(FORWARD, target, DEGREES)
+        # FIXED: Changed spin_for to spin_to_position for absolute movement
+        config.ARM_MOTOR.spin_to_position(target, DEGREES)
     else:
         print("Invalid Arm Position")
 
 def move_claw(position_name, speed=50):
     if position_name in CLAW_POSITIONS:
         target = CLAW_POSITIONS[position_name]
-        # Set velocity first using PERCENT unit
+        # Set velocity first
         config.CLAW_MOTOR.set_velocity(speed, PERCENT)
-        # Spin to target; by default spin_for blocks execution until done
-        config.CLAW_MOTOR.spin_for(FORWARD, target, DEGREES)
+        # FIXED: Changed spin_for to spin_to_position for absolute movement
+        config.CLAW_MOTOR.spin_to_position(target, DEGREES)
     else:
         print("Invalid Claw Position")
